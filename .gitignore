@@ -1,0 +1,32 @@
+# Audio/media files
+*.m4a
+*.mp3
+*.aac
+*.wav
+*.flac
+*.ogg
+
+# zlist folder (audio source folder)
+zlist/
+
+# OS/system files
+.DS_Store
+Thumbs.db
+
+# Temporary/editor files
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+
+# Python/bytecode files (if scripting in Python later)
+__pycache__/
+*.pyc
+
+# Termux-specific or shell junk
+*.pid
+nohup.out
+
+# Backup and misc
+*~
