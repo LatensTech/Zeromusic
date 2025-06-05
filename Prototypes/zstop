@@ -1,0 +1,15 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+# Paths
+NOWPLAYING="$HOME/labmusic/Zeromusic/.current_track"
+
+# Stop media
+termux-media-player stop
+
+# Remove current track info
+if [ -f "$NOWPLAYING" ]; then
+  rm "$NOWPLAYING"
+  echo "🛑 Playback stopped and cleared now playing info."
+else
+  echo "🛑 Nothing was playing."
+fi

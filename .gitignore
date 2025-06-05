@@ -7,7 +7,7 @@
 *.ogg
 
 # zlist folder (audio source folder)
-zlist/
+#zlist/
 
 # OS/system files
 .DS_Store

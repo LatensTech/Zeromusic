@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Fix paths to your actual Zeromusic folder under labmusic
+ZROOT="$HOME/labmusic/Zeromusic"
+CURRENT_TRACK_FILE="$ZROOT/.current_track"
+PLAYLIST_FILE="$ZROOT/zmap/index.txt"
+PROTOTYPES_DIR="$ZROOT/Prototypes"
+
+# Read current track number or start at 1
+if [ -f "$CURRENT_TRACK_FILE" ]; then
+    current_track=$(cat "$CURRENT_TRACK_FILE")
+else
+    current_track=1
+fi
+
+# Get total number of tracks
+total_tracks=$(wc -l < "$PLAYLIST_FILE")
+
+# Calculate next track (loop to 1 if at end)
+next_track=$((current_track + 1))
+if [ "$next_track" -gt "$total_tracks" ]; then
+    next_track=1
+fi
+
+# Save new track number
+echo "$next_track" > "$CURRENT_TRACK_FILE"
+
+# Play next track using your existing player script
+cd "$PROTOTYPES_DIR" || exit
+./zply "$next_track"

@@ -1,0 +1,28 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+ZPLAY="$HOME/labmusic/Zeromusic/zply"
+NEXTTRACK="$HOME/labmusic/Zeromusic/.next_track"
+
+while true; do
+  if [ -f "$NEXTTRACK" ]; then
+    NUMBER=$(cat "$NEXTTRACK")
+    [ -z "$NUMBER" ] && NUMBER=1
+
+    # Run zply in background + wait
+    "$ZPLAY" "$NUMBER" silent &
+
+    # Wait until that background zply process finishes
+    wait
+
+    # Increment for next round
+    INDEX="$HOME/labmusic/Zeromusic/zmap/index.txt"
+    TOTAL=$(wc -l < "$INDEX")
+    NEXT=$((NUMBER + 1))
+    [ "$NEXT" -gt "$TOTAL" ] && NEXT=1
+
+    echo "$NEXT" > "$NEXTTRACK"
+  else
+    echo "⚠️  .next_track missing"
+    sleep 2
+  fi
+done

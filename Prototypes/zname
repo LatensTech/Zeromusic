@@ -1,0 +1,16 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+# Get the number argument
+number="$1"
+
+# Define the index path
+index="$HOME/labmusic/Zeromusic/zmap/index.txt"
+
+# If no input, exit
+if [ -z "$number" ]; then
+  echo "Usage: zname <number>"
+  exit 1
+fi
+
+# Search and extract the filename
+grep "^$number ->" "$index" | cut -d'>' -f2- | sed 's/^ *//'

@@ -1,0 +1,47 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+ZMAP="$HOME/labmusic/Zeromusic/zmap"
+ZFILES="$HOME/labmusic/Zeromusic/zfiles"
+INDEX="$ZMAP/index.txt"
+NOWPLAYING="$HOME/labmusic/Zeromusic/.current_track"
+NEXTTRACK="$HOME/labmusic/Zeromusic/.next_track"
+
+play_file() {
+  FILENAME="$1"
+  echo "$FILENAME" > "$NOWPLAYING"
+  [ "$2" != "silent" ] && echo -e "\n🎧 Now Playing: $FILENAME\n"
+
+  if [ "$2" = "silent" ]; then
+    termux-media-player play "$ZFILES/$FILENAME" >/dev/null 2>&1 &
+  else
+    termux-media-player play "$ZFILES/$FILENAME"
+  fi
+}
+
+# If user gives a track number, play that one
+if [ -n "$1" ]; then
+  NUMBER="$1"
+else
+  NUMBER=1
+fi
+
+TOTAL=$(wc -l < "$INDEX")
+FILENAME=$(grep "^$NUMBER ->" "$INDEX" | cut -d'>' -f2- | sed 's/^ *//')
+
+if [ -z "$FILENAME" ]; then
+  echo "❌ No song mapped to number: $NUMBER"
+  exit 1
+fi
+
+play_file "$FILENAME" "$2"
+
+# Save next number
+NEXT=$((NUMBER + 1))
+[ "$NEXT" -gt "$TOTAL" ] && NEXT=1
+echo "$NEXT" > "$NEXTTRACK"
+echo "→ Next track set to: $NEXT"
+
+# Start background radio loop if not already running and not in silent mode
+if [ "$2" != "silent" ]; then
+  pgrep -f "zradio" >/dev/null || nohup bash "$HOME/labmusic/Zeromusic/Prototypes/zradio" >/dev/null 2>&1 &
+fi

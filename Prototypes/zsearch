@@ -1,0 +1,38 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+ZMAP="$HOME/labmusic/Zeromusic/zmap"
+INDEX="$ZMAP/index.txt"
+ZPLAY="$HOME/labmusic/Zeromusic/Prototypes/zply"
+
+
+echo -e "\n🔍 ZSearch — Find Your Track\n"
+
+# Get the keyword
+read -p "Enter search keyword: " keyword
+echo
+
+# Do the search (case-insensitive)
+matches=$(grep -i "$keyword" "$INDEX")
+
+if [ -z "$matches" ]; then
+  echo "❌ No matches found for: $keyword"
+  exit 0
+fi
+
+# Display results
+echo "🎧 Matching Tracks:"
+echo "$matches" | while IFS= read -r line; do
+  num=$(echo "$line" | cut -d' ' -f1)
+  name=$(echo "$line" | cut -d'>' -f2- | sed 's/^ *//')
+  echo "[$num] ➜ $name"
+done
+
+echo
+read -p "▶️  Play one? Enter number (or press Enter to skip): " choice
+
+if [[ "$choice" =~ ^[0-9]+$ ]]; then
+  echo -e "\n⏯️  Launching track $choice...\n"
+  "$ZPLAY" "$choice"
+else
+  echo "✅ Done."
+fi

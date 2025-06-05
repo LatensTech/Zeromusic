@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Colors
+GREEN="\033[0;32m"
+CYAN="\033[0;36m"
+RED="\033[0;31m"
+RESET="\033[0m"
+YELLOW="\033[1;33m"
+
+# Paths
+BASE_DIR="/data/data/com.termux/files/home/labmusic/Zeromusic"
+ZMAP="$BASE_DIR/zmap/index.txt"
+ZPLY="$BASE_DIR/Prototypes/zply"
+CURRENT_TRACK="$BASE_DIR/.current_track"
+
+show_help() {
+  echo -e "${CYAN}📘 Available Commands:${RESET}"
+  echo -e "${YELLOW}zhome${RESET}      - Launch Zeromusic control center"
+  echo -e "${YELLOW}zply [num]${RESET} - Play a track by number"
+  echo -e "${YELLOW}zpause${RESET}     - Pause current playback"
+  echo -e "${YELLOW}zrsm${RESET}       - Resume paused playback"
+  echo -e "${YELLOW}zstop${RESET}      - Stop playback completely"
+  echo -e "${YELLOW}znext${RESET}      - Skip to the next track"
+  echo -e "${YELLOW}zsearch${RESET}    - Search tracks by keyword"
+  echo -e "${YELLOW}zradio${RESET}     - Start radio autoplay from .next_track"
+  echo -e "${YELLOW}zname [num]${RESET}      - LookUp Song Name"
+  echo -e "${YELLOW}mapping.sh${RESET} - Rebuild the index map"
+  
+}
+
+
+# Draw Banner
+clear
+# ASCII Banner using figlet
+echo -e "${CYAN}"
+figlet -f slant "ZeroMusic"
+echo -e "${RESET}                                                                  🎵 Zeromusic Menu:"
+
+# Display Now Playing block if available
+
+# Display Now Playing block if file exists and not empty
+if [ -s "$CURRENT_TRACK" ]; then
+  NOW_PLAYING=$(cat "$CURRENT_TRACK")
+  echo -e "${YELLOW}🎧 Now Playing:${RESET}"
+  echo -e "${CYAN}┌──────────────────────────────────────┐"
+  printf "${CYAN}│ %-36.36s │\n" "$NOW_PLAYING"
+  echo -e "└──────────────────────────────────────┘${RESET}"
+  echo ""
+fi
+
+# Menu loop
+while true; do
+  echo -e "${CYAN}🎵 Zeromusic Menu:${RESET}"
+  echo -e "${GREEN}"
+  echo "1) Play a track"
+  echo "2) List all tracks"
+  echo "3) Search by keyword"
+  echo "4) Help"
+  echo "5) Exit"
+  echo -e "${RESET}"
+  read -p "Select an option: " opt
+
+  case $opt in
+    1)
+      read -p "Enter track number to play: " num
+      [ -x "$ZPLY" ] && "$ZPLY" "$num" || echo -e "${RED}❌ zply script not found at $ZPLY${RESET}"
+      ;;
+    2)
+      if [ -f "$ZMAP" ]; then
+        echo -e "${GREEN}Available Tracks:${RESET}"
+        cat "$ZMAP"
+      else
+        echo -e "${RED}❌ Track list not found at $ZMAP${RESET}"
+      fi
+      ;;
+    3)
+      read -p "Search keyword: " key
+      if [ -f "$ZMAP" ]; then
+        echo -e "${GREEN}Matches:${RESET}"
+        grep -i "$key" "$ZMAP" || echo -e "${RED}❌ No match found.${RESET}"
+      else
+        echo -e "${RED}❌ Track list not found at $ZMAP${RESET}"
+      fi
+      ;;
+    4)
+     show_help
+     ;;
+
+    5)
+      echo "👋 Exiting Zeromusic..."
+      break
+      ;;
+    *)
+      echo -e "${RED}❌ Invalid option${RESET}"
+      ;;
+  esac
+
+  echo ""
+done

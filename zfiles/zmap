@@ -1,0 +1,13 @@
+#!/bin/bash
+# zmap - generate numbered index for all audio files
+
+cd "$(dirname "$0")/zlist" || exit
+
+i=1
+> ../zmap  # clear old map
+for file in *.m4a; do
+  echo "$i|$file" >> ../zmap
+  i=$((i+1))
+done
+
+echo "[✓] zmap created with $(wc -l < ../zmap) entries"
