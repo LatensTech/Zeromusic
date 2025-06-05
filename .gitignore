@@ -9,6 +9,12 @@
 # zlist folder (audio source folder)
 #zlist/
 
+.next_track
+.current_track
+.gitignore
+
+
+
 # OS/system files
 .DS_Store
 Thumbs.db
